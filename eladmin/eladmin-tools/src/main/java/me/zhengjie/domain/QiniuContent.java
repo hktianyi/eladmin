@@ -16,7 +16,7 @@
 package me.zhengjie.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -31,29 +31,29 @@ import java.sql.Timestamp;
 public class QiniuContent implements Serializable {
 
     @TableId(value = "content_id", type = IdType.AUTO)
-    @ApiModelProperty(value = "ID", hidden = true)
+    @Schema(description = "ID", hidden = true)
     private Long id;
 
     @TableField("name")
-    @ApiModelProperty(value = "文件名")
+    @Schema(description = "文件名")
     private String key;
 
-    @ApiModelProperty(value = "空间名")
+    @Schema(description = "空间名")
     private String bucket;
 
-    @ApiModelProperty(value = "大小")
+    @Schema(description = "大小")
     private String size;
 
-    @ApiModelProperty(value = "文件地址")
+    @Schema(description = "文件地址")
     private String url;
 
-    @ApiModelProperty(value = "文件类型")
+    @Schema(description = "文件类型")
     private String suffix;
 
-    @ApiModelProperty(value = "空间类型：公开/私有")
+    @Schema(description = "空间类型：公开/私有")
     private String type = "公开";
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    @ApiModelProperty(value = "创建或更新时间")
+    @Schema(description = "创建或更新时间")
     private Timestamp updateTime;
 }

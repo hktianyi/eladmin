@@ -32,6 +32,9 @@ spring:
     #连接超时时间
     timeout: 5000
 
+  config:
+    import: optional:classpath:.env[.properties]
+
 task:
   pool:
     # 核心线程池大小

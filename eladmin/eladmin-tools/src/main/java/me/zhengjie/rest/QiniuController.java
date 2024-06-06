@@ -16,8 +16,8 @@
 package me.zhengjie.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.annotation.Log;
@@ -46,7 +46,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/qiNiuContent")
-@Api(tags = "工具：七牛云存储管理")
+@Tag(name = "工具：七牛云存储管理")
 public class QiniuController {
 
     private final QiniuContentService qiniuContentService;
@@ -58,7 +58,7 @@ public class QiniuController {
     }
 
     @Log("配置七牛云存储")
-    @ApiOperation("配置七牛云存储")
+    @Operation(summary = "配置七牛云存储")
     @PutMapping(value = "/config")
     public ResponseEntity<Object> updateQiNiuConfig(@Validated @RequestBody QiniuConfig qiniuConfig){
         qiNiuConfigService.saveConfig(qiniuConfig);
@@ -66,19 +66,19 @@ public class QiniuController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ApiOperation("导出数据")
+    @Operation(summary = "导出数据")
     @GetMapping(value = "/download")
     public void exportQiNiu(HttpServletResponse response, QiniuQueryCriteria criteria) throws IOException {
         qiniuContentService.downloadList(qiniuContentService.queryAll(criteria), response);
     }
 
-    @ApiOperation("查询文件")
+    @Operation(summary = "查询文件")
     @GetMapping
     public ResponseEntity<PageResult<QiniuContent>> queryQiNiu(QiniuQueryCriteria criteria, Page<Object> page){
         return new ResponseEntity<>(qiniuContentService.queryAll(criteria, page),HttpStatus.OK);
     }
 
-    @ApiOperation("上传文件")
+    @Operation(summary = "上传文件")
     @PostMapping
     public ResponseEntity<Object> uploadQiNiu(@RequestParam MultipartFile file){
         QiniuContent qiniuContent = qiniuContentService.upload(file, qiNiuConfigService.getConfig());
@@ -90,7 +90,7 @@ public class QiniuController {
     }
 
     @Log("同步七牛云数据")
-    @ApiOperation("同步七牛云数据")
+    @Operation(summary = "同步七牛云数据")
     @PostMapping(value = "/synchronize")
     public ResponseEntity<Object> synchronizeQiNiu(){
         qiniuContentService.synchronize(qiNiuConfigService.getConfig());
@@ -98,7 +98,7 @@ public class QiniuController {
     }
 
     @Log("下载文件")
-    @ApiOperation("下载文件")
+    @Operation(summary = "下载文件")
     @GetMapping(value = "/download/{id}")
     public ResponseEntity<Object> downloadQiNiu(@PathVariable Long id){
         Map<String,Object> map = new HashMap<>(1);
@@ -107,7 +107,7 @@ public class QiniuController {
     }
 
     @Log("删除文件")
-    @ApiOperation("删除文件")
+    @Operation(summary = "删除文件")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteQiNiu(@PathVariable Long id){
         qiniuContentService.delete(qiniuContentService.getById(id), qiNiuConfigService.getConfig());
@@ -115,7 +115,7 @@ public class QiniuController {
     }
 
     @Log("删除多张图片")
-    @ApiOperation("删除多张图片")
+    @Operation(summary = "删除多张图片")
     @DeleteMapping
     public ResponseEntity<Object> deleteAllQiNiu(@RequestBody Long[] ids) {
         qiniuContentService.deleteAll(ids, qiNiuConfigService.getConfig());

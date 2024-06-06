@@ -26,7 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -38,14 +39,14 @@ import me.zhengjie.utils.PageResult;
 **/
 @RestController
 @RequiredArgsConstructor
-@Api(tags = "${apiAlias}管理")
+@Tag(name = "${apiAlias}管理")
 @RequestMapping("/api/${changeClassName}")
 public class ${className}Controller {
 
     private final ${className}Service ${changeClassName}Service;
 
     @Log("导出数据")
-    @ApiOperation("导出数据")
+    @Operation(summary = "导出数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('${changeClassName}:list')")
     public void export${className}(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
@@ -54,7 +55,7 @@ public class ${className}Controller {
 
     @GetMapping
     @Log("查询${apiAlias}")
-    @ApiOperation("查询${apiAlias}")
+    @Operation(summary = "查询${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:list')")
     public ResponseEntity<PageResult<${className}>> query${className}(${className}QueryCriteria criteria, Page<Object> page){
         return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,page),HttpStatus.OK);
@@ -62,7 +63,7 @@ public class ${className}Controller {
 
     @PostMapping
     @Log("新增${apiAlias}")
-    @ApiOperation("新增${apiAlias}")
+    @Operation(summary = "新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
     public ResponseEntity<Object> create${className}(@Validated @RequestBody ${className} resources){
         ${changeClassName}Service.create(resources);
@@ -71,7 +72,7 @@ public class ${className}Controller {
 
     @PutMapping
     @Log("修改${apiAlias}")
-    @ApiOperation("修改${apiAlias}")
+    @Operation(summary = "修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
     public ResponseEntity<Object> update${className}(@Validated @RequestBody ${className} resources){
         ${changeClassName}Service.update(resources);
@@ -80,7 +81,7 @@ public class ${className}Controller {
 
     @DeleteMapping
     @Log("删除${apiAlias}")
-    @ApiOperation("删除${apiAlias}")
+    @Operation(summary = "删除${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:del')")
     public ResponseEntity<Object> delete${className}(@RequestBody List<${pkColumnType}> ids) {
         ${changeClassName}Service.deleteAll(ids);

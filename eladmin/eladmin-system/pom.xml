@@ -86,6 +86,12 @@
             <artifactId>oshi-core</artifactId>
             <version>6.1.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <!-- 打包 -->
@@ -104,5 +110,17 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!--<resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                &lt;!&ndash;<includes>
+                    <include></include>
+                </includes>&ndash;&gt;
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <filters>
+            <filter>${basedir}/.env</filter>
+        </filters>-->
     </build>
 </project>
