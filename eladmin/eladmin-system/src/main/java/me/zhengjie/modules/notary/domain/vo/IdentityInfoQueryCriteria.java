@@ -17,10 +17,15 @@ package me.zhengjie.modules.notary.domain.vo;
 
 import lombok.Data;
 
+import java.util.Collection;
+
 /**
 * @author rdbao
 * @date 2024-06-06
 **/
 @Data
 public class IdentityInfoQueryCriteria{
+
+    Long userId;
+    Collection<Long> userIds;
 }

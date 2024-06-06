@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,14 +52,17 @@ public class User extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     @Schema(description = "用户岗位")
+    @JsonIgnore
     private Set<Job> jobs;
 
     @TableField(value = "dept_id")
     @Schema(hidden = true)
+    @JsonIgnore
     private Long deptId;
 
     @Schema(description = "用户部门")
     @TableField(exist = false)
+    @JsonIgnore
     private Dept dept;
 
     @NotBlank

@@ -17,7 +17,11 @@ package me.zhengjie.modules.notary.mapper;
 
 import me.zhengjie.modules.notary.domain.IdentityInfo;
 import me.zhengjie.modules.notary.domain.vo.IdentityInfoQueryCriteria;
+
+import java.util.Collection;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -34,4 +38,7 @@ public interface IdentityInfoMapper extends BaseMapper<IdentityInfo> {
     IPage<IdentityInfo> findAll(@Param("criteria") IdentityInfoQueryCriteria criteria, Page<Object> page);
 
     List<IdentityInfo> findAll(@Param("criteria") IdentityInfoQueryCriteria criteria);
+
+    @Delete("delete from b_identity_info where user_id = userId")
+    void deleteByUserId(@Param("userId") Long userId);
 }

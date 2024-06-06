@@ -56,7 +56,7 @@ export default {
         this.loading = true
         // 请求数据
         initData(this.url, this.getQueryParams()).then(data => {
-          this.total = data.totalElements
+          this.total = data.total
           this.data = data.content
           // time 毫秒后显示表格
           setTimeout(() => {

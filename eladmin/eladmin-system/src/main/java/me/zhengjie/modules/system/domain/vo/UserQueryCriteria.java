@@ -15,8 +15,10 @@
  */
 package me.zhengjie.modules.system.domain.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import java.io.Serializable;
+import me.zhengjie.utils.Pageable;
+
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
@@ -27,21 +29,28 @@ import java.util.Set;
  * @date 2018-11-23
  */
 @Data
-public class UserQueryCriteria implements Serializable {
+@Schema
+public class UserQueryCriteria extends Pageable {
 
+    @Schema(description = "用户ID")
     private Long id;
 
+    @Schema(hidden = true)
     private Set<Long> deptIds = new HashSet<>();
 
+    @Schema(description = "模糊搜索")
     private String blurry;
 
+    @Schema(hidden = true)
     private Boolean enabled;
 
+    @Schema(hidden = true)
     private Long deptId;
+
+    private Long roleId;
 
     private List<Timestamp> createTime;
 
+    @Schema(hidden = true)
     private Long offset;
-
-    private Long size;
 }

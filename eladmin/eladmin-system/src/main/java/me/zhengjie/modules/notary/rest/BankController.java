@@ -45,14 +45,6 @@ public class BankController {
 
     private final BankService bankService;
 
-    @Log("导出数据")
-    @Operation(summary = "导出数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('bank:list')")
-    public void exportBank(HttpServletResponse response, BankQueryCriteria criteria) throws IOException {
-        bankService.download(bankService.queryAll(criteria), response);
-    }
-
     @GetMapping
     @Log("查询银行")
     @Operation(summary = "查询银行")
@@ -84,7 +76,6 @@ public class BankController {
     @Operation(summary = "删除银行")
     @PreAuthorize("@el.check('bank:del')")
     public ResponseEntity<Object> deleteBank(@RequestBody List<Integer> ids) {
-        bankService.deleteAll(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

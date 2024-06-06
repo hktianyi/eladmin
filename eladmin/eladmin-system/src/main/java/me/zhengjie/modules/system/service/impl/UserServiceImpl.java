@@ -20,29 +20,44 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.config.FileProperties;
 import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.exception.EntityExistException;
+import me.zhengjie.exception.EntityNotFoundException;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.UserCacheManager;
 import me.zhengjie.modules.system.domain.Job;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.User;
-import me.zhengjie.exception.EntityExistException;
-import me.zhengjie.exception.EntityNotFoundException;
 import me.zhengjie.modules.system.domain.vo.UserQueryCriteria;
 import me.zhengjie.modules.system.mapper.UserJobMapper;
 import me.zhengjie.modules.system.mapper.UserMapper;
 import me.zhengjie.modules.system.mapper.UserRoleMapper;
 import me.zhengjie.modules.system.service.UserService;
-import me.zhengjie.utils.*;
+import me.zhengjie.utils.CacheKey;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.utils.StringUtils;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -85,7 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(User resources) {
-        resources.setDeptId(resources.getDept().getId());
+        if (resources.getDept() != null) resources.setDeptId(resources.getDept().getId());
         if (userMapper.findByUsername(resources.getUsername()) != null) {
             throw new EntityExistException(User.class, "username", resources.getUsername());
         }
@@ -97,9 +112,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         save(resources);
         // 保存用户岗位
-        userJobMapper.insertData(resources.getId(), resources.getJobs());
+        if (!CollectionUtils.isEmpty(resources.getJobs()))
+            userJobMapper.insertData(resources.getId(), resources.getJobs());
         // 保存用户角色
-        userRoleMapper.insertData(resources.getId(), resources.getRoles());
+        if (!CollectionUtils.isEmpty(resources.getRoles()))
+            userRoleMapper.insertData(resources.getId(), resources.getRoles());
     }
 
     @Override
@@ -125,11 +142,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             redisUtils.del(CacheKey.ROLE_AUTH + resources.getId());
         }
         // 修改部门会影响 数据权限
-        if (!Objects.equals(resources.getDept(),user.getDept())) {
+        if (!Objects.equals(resources.getDept(), user.getDept())) {
             redisUtils.del(CacheKey.DATA_USER + resources.getId());
         }
         // 如果用户被禁用，则清除用户登录信息
-        if(!resources.getEnabled()){
+        if (!resources.getEnabled()) {
             onlineUserService.kickOutForUsername(resources.getUsername());
         }
         user.setDeptId(resources.getDept().getId());
@@ -220,8 +237,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 验证文件上传的格式
         String image = "gif jpg png jpeg";
         String fileType = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
-        if(fileType != null && !image.contains(fileType)){
-            throw new BadRequestException("文件格式错误！, 仅支持 " + image +" 格式");
+        if (fileType != null && !image.contains(fileType)) {
+            throw new BadRequestException("文件格式错误！, 仅支持 " + image + " 格式");
         }
         User user = userMapper.findByUsername(SecurityUtils.getCurrentUsername());
         String oldPath = user.getAvatarPath();

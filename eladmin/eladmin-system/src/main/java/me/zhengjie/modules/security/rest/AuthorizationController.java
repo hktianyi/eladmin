@@ -62,7 +62,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "系统：系统授权接口")
+@Tag(name = "登录授权接口")
 public class AuthorizationController {
     private final SecurityProperties properties;
     private final RedisUtils redisUtils;

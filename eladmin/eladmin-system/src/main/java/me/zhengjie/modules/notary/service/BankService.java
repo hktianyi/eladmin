@@ -15,61 +15,75 @@
 */
 package me.zhengjie.modules.notary.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.notary.domain.Bank;
 import me.zhengjie.modules.notary.domain.vo.BankQueryCriteria;
-import java.util.Map;
-import java.util.List;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import me.zhengjie.modules.notary.mapper.BankMapper;
+import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
-* @description 服务接口
+* @description 服务实现
 * @author rdbao
 * @date 2024-06-06
 **/
-public interface BankService extends IService<Bank> {
+@Service
+@RequiredArgsConstructor
+public class BankService extends ServiceImpl<BankMapper, Bank> {
 
-    /**
-    * 查询数据分页
-    * @param criteria 条件
-    * @param page 分页参数
-    * @return PageResult
-    */
-    PageResult<Bank> queryAll(BankQueryCriteria criteria, Page<Object> page);
+    private final BankMapper bankMapper;
 
-    /**
-    * 查询所有数据不分页
-    * @param criteria 条件参数
-    * @return List<BankDto>
-    */
-    List<Bank> queryAll(BankQueryCriteria criteria);
+    public PageResult<Bank> queryAll(BankQueryCriteria criteria, Page<Object> page){
+        return PageUtil.toPage(bankMapper.findAll(criteria, page));
+    }
 
-    /**
-    * 创建
-    * @param resources /
-    */
-    void create(Bank resources);
+    public List<Bank> queryAll(BankQueryCriteria criteria){
+        return bankMapper.findAll(criteria);
+    }
 
-    /**
-    * 编辑
-    * @param resources /
-    */
-    void update(Bank resources);
+    @Transactional(rollbackFor = Exception.class)
+    public void create(Bank resources) {
+        save(resources);
+    }
 
-    /**
-    * 多选删除
-    * @param ids /
-    */
-    void deleteAll(List<Integer> ids);
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Bank resources) {
+        Bank bank = getById(resources.getId());
+        bank.copy(resources);
+        saveOrUpdate(bank);
+    }
 
-    /**
-    * 导出数据
-    * @param all 待导出的数据
-    * @param response /
-    * @throws IOException /
-    */
-    void download(List<Bank> all, HttpServletResponse response) throws IOException;
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAll(List<Integer> ids) {
+        removeBatchByIds(ids);
+    }
+
+    public void download(List<Bank> all, HttpServletResponse response) throws IOException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Bank bank : all) {
+            Map<String,Object> map = new LinkedHashMap<>();
+            map.put("银行名称", bank.getBankName());
+            map.put("代理人姓名", bank.getAgentName());
+            map.put("代理人身份证号", bank.getAgentIdCode());
+            map.put("代理人手机号", bank.getAgentTel());
+            map.put("代理人签章", bank.getAgentSealUrl());
+            map.put("状态0=无效，1=有效", bank.getStatus());
+            map.put(" createTime",  bank.getCreateTime());
+            map.put(" updateTime",  bank.getUpdateTime());
+            list.add(map);
+        }
+        FileUtil.downloadExcel(list, response);
+    }
 }

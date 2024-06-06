@@ -223,7 +223,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             trees = depts;
         }
         Map<String,Object> map = new HashMap<>(2);
-        map.put("totalElements",depts.size());
+        map.put("total",depts.size());
         map.put("content",CollectionUtil.isEmpty(trees)? depts :trees);
         return map;
     }

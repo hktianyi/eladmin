@@ -64,7 +64,7 @@ public class PageUtil extends cn.hutool.core.util.PageUtil {
     /**
      * 自定义分页
      */
-    public static <T> PageResult<T> toPage(List<T> list, long totalElements) {
-        return new PageResult<>(list, totalElements);
+    public static <T> PageResult<T> toPage(List<T> list, long total) {
+        return new PageResult<>(list, total);
     }
 }

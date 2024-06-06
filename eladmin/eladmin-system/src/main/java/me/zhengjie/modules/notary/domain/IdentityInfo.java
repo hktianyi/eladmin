@@ -38,11 +38,11 @@ public class IdentityInfo implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     @Schema(description = "id")
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Schema(description = "userId")
-    private Integer userId;
+    private Long userId;
 
     @Schema(description = "姓名")
     private String name;
