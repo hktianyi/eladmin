@@ -24,7 +24,6 @@ import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.aliyuncs.exceptions.ClientException;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +62,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/alioss")
 @Tag(name = "工具：阿里云存储管理")
-@Hidden
 public class AliOSSController {
 
     private final QiniuContentService qiniuContentService;
@@ -77,15 +75,14 @@ public class AliOSSController {
         if (ossClient != null) return ossClient;
         synchronized (AliOSSController.class) {
             if (ossClient != null) return ossClient;
-            String endpoint = "https://oss-cn-hangzhou.aliyuncs.com";
             QiniuConfig config = qiNiuConfigService.getConfig();
             bucketName = config.getBucket();
             DefaultCredentialProvider credentialsProvider = CredentialsProviderFactory.newDefaultCredentialProvider(config.getAccessKey(), config.getSecretKey());
-            return new OSSClientBuilder().build(endpoint, credentialsProvider);
+            return new OSSClientBuilder().build(config.getZone(), credentialsProvider);
         }
     }
 
-    @Operation(summary = "查询文件")
+    @Operation(summary = "查询文件", hidden = true)
     @GetMapping
     public ResponseEntity<PageResult<QiniuContent>> queryQiNiu(QiniuQueryCriteria criteria, Page<Object> page) {
         return new ResponseEntity<>(qiniuContentService.queryAll(criteria, page), HttpStatus.OK);
@@ -118,7 +115,7 @@ public class AliOSSController {
     }
 
     @Log("下载文件")
-    @Operation(summary = "下载文件")
+    @Operation(summary = "下载文件", hidden = true)
     @GetMapping(value = "/download/{id}")
     public ResponseEntity<Object> downloadQiNiu(@PathVariable Long id) {
         Map<String, Object> map = new HashMap<>(1);
@@ -127,7 +124,7 @@ public class AliOSSController {
     }
 
     @Log("删除文件")
-    @Operation(summary = "删除文件")
+    @Operation(summary = "删除文件", hidden = true)
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteQiNiu(@PathVariable Long id) {
         qiniuContentService.delete(qiniuContentService.getById(id), qiNiuConfigService.getConfig());
@@ -135,7 +132,7 @@ public class AliOSSController {
     }
 
     @Log("删除多张图片")
-    @Operation(summary = "删除多张图片")
+    @Operation(summary = "删除多张图片", hidden = true)
     @DeleteMapping
     public ResponseEntity<Object> deleteAllQiNiu(@RequestBody Long[] ids) {
         qiniuContentService.deleteAll(ids, qiNiuConfigService.getConfig());

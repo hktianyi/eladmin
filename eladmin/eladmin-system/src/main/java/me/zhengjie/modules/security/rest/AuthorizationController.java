@@ -119,7 +119,7 @@ public class AuthorizationController {
         return ResponseEntity.ok(SecurityUtils.getCurrentUser());
     }
 
-    @Operation(summary = "获取验证码")
+    @Operation(summary = "获取验证码", hidden = true)
     @AnonymousGetMapping(value = "/code")
     public ResponseEntity<Object> getCode() {
         // 获取运算的结果
