@@ -20,8 +20,20 @@
     <select id="findAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from b_bank
+        from b_bank b
         <where>
+            <if test="criteria.bankName != null and criteria.bankName != ''">
+                and b.bank_name like concat('%', #{criteria.bankName}, '%')
+            </if>
+            <if test="criteria.agentName != null and criteria.agentName != ''">
+                and b.agent_name like concat('%', #{criteria.agentName}, '%')
+            </if>
+            <if test="criteria.agentTel != null and criteria.agentTel != ''">
+                and b.agent_tel like concat('%', #{criteria.agentTel}, '%')
+            </if>
+            <if test="criteria.createTime != null and criteria.createTime.size() == 2">
+                and b.create_time between #{criteria.createTime[0]} and #{criteria.createTime[1]}
+            </if>
         </where>
         order by id desc
     </select>

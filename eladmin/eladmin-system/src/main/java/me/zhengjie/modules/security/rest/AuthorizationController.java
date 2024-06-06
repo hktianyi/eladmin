@@ -16,6 +16,7 @@
 package me.zhengjie.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.wf.captcha.base.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,16 +27,15 @@ import me.zhengjie.annotation.rest.AnonymousDeleteMapping;
 import me.zhengjie.annotation.rest.AnonymousGetMapping;
 import me.zhengjie.annotation.rest.AnonymousPostMapping;
 import me.zhengjie.config.RsaProperties;
-import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.config.bean.LoginCodeEnum;
 import me.zhengjie.modules.security.config.bean.LoginProperties;
 import me.zhengjie.modules.security.config.bean.SecurityProperties;
 import me.zhengjie.modules.security.security.TokenProvider;
+import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
-import me.zhengjie.modules.security.service.OnlineUserService;
-import me.zhengjie.utils.RsaUtils;
 import me.zhengjie.utils.RedisUtils;
+import me.zhengjie.utils.RsaUtils;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -45,8 +45,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -69,6 +74,7 @@ public class AuthorizationController {
     private final OnlineUserService onlineUserService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserDetailsService userDetailsService;
     @Resource
     private LoginProperties loginProperties;
 
@@ -76,26 +82,40 @@ public class AuthorizationController {
     @Operation(summary = "登录授权")
     @AnonymousPostMapping(value = "/login")
     public ResponseEntity<Object> login(@Validated @RequestBody AuthUserDto authUser, HttpServletRequest request) throws Exception {
-        // 密码解密
-        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
-//        // 查询验证码
-//        String code = (String) redisUtils.get(authUser.getUuid());
-//        // 清除验证码
-//        redisUtils.del(authUser.getUuid());
-//        if (StringUtils.isBlank(code)) {
-//            throw new BadRequestException("验证码不存在或已过期");
-//        }
-//        if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-//            throw new BadRequestException("验证码错误");
-//        }
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = null;
+        if (authUser.getType() == 0) {
+            String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, authUser.getPassword());
+            // 查询验证码
+            if (loginProperties.isCheckCode()) {
+                String code = (String) redisUtils.get(authUser.getUuid());
+                // 清除验证码
+                redisUtils.del(authUser.getUuid());
+                if (StringUtils.isBlank(code)) {
+                    return ResponseEntity.badRequest().body("验证码不存在或已过期");
+                }
+                if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
+                    return ResponseEntity.badRequest().body("验证码错误");
+                }
+            }
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
+            authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        } else if (authUser.getType() == 1) {
+            String sendKey = "smsLogin:" + authUser.getUsername();
+            String code = (String) redisUtils.get(sendKey);
+            if (StringUtils.isBlank(code)) {
+                return ResponseEntity.badRequest().body("验证码不存在或已过期");
+            } else if (!code.equals(authUser.getCode())) {
+                return ResponseEntity.badRequest().body("验证码错误");
+            }
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
+            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        } else {
+            return ResponseEntity.badRequest().body("登录类型不支持");
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // 生成令牌与第三方系统获取令牌方式
-        // UserDetails userDetails = userDetailsService.loadUserByUsername(userInfo.getUsername());
-        // Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        // SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.createToken(authentication);
         final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
         // 返回 token 与 用户信息
@@ -138,6 +158,36 @@ public class AuthorizationController {
             put("uuid", uuid);
         }};
         return ResponseEntity.ok(imgResult);
+    }
+
+    @Operation(summary = "获取短信验证码")
+    @AnonymousGetMapping(value = "/smsCode")
+    public ResponseEntity<Object> getSmsCode(String phone) {
+        String sendRetryKey = "sendRetry:" + phone;
+        if (redisUtils.get(sendRetryKey) != null) {
+            Map<String, Object> result = new HashMap<>(2) {{
+                put("code", "1");
+                put("msg", "发送太频繁");
+            }};
+            return ResponseEntity.ok(result);
+        }
+
+        String sendKey = "smsLogin:" + phone;
+        String code = (String) redisUtils.get(sendKey);
+        if (StringUtils.isEmpty(code)) {
+            code = RandomUtil.randomNumbers(6);
+        }
+        // 保存
+        redisUtils.set(phone, code, loginProperties.getLoginCode().getExpiration(), TimeUnit.MINUTES);
+        // TODO 发送验证码
+        log.debug("发送验证码：{} {}", phone, code);
+
+        // 验证码信息
+        Map<String, Object> result = new HashMap<String, Object>(2) {{
+            put("code", 200);
+            put("msg", "发送成功");
+        }};
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "退出登录")

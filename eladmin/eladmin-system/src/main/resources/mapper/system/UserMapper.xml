@@ -73,7 +73,13 @@
                 or u.email like concat('%', #{criteria.blurry}, '%')
                 )
             </if>
-            <if test="criteria.createTime != null and criteria.createTime.size() != 0">
+            <if test="criteria.username != null and criteria.username != ''">
+                and u.username like concat('%', #{criteria.username}, '%')
+            </if>
+            <if test="criteria.phone != null and criteria.phone != ''">
+                and u.phone like concat('%', #{criteria.phone}, '%')
+            </if>
+            <if test="criteria.createTime != null and criteria.createTime.size() == 2">
                 and u.create_time between #{criteria.createTime[0]} and #{criteria.createTime[1]}
             </if>
         </where>
@@ -97,9 +103,15 @@
         left join sys_job j on suj.job_id = j.job_id
         left join sys_users_roles sur on u.user_user_id = sur.user_id
         left join sys_role r on sur.role_id = r.role_id
+        <if test="criteria.idName != null and criteria.idName != ''">
+            left join b_identity_info bii on bii.user_id = u.user_id
+        </if>
         <where>
             <if test="criteria.roleId != null">
                 and sur.role_id = #{criteria.roleId}
+            </if>
+            <if test="criteria.idName != null and criteria.idName != ''">
+                and bii.name like concat('%', #{criteria.idName}, '%')
             </if>
         </where>
         order by u.user_user_id desc

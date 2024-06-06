@@ -21,6 +21,8 @@ import me.zhengjie.modules.notary.service.BankService;
 import me.zhengjie.modules.notary.domain.vo.BankQueryCriteria;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
+
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,8 +51,8 @@ public class BankController {
     @Log("查询银行")
     @Operation(summary = "查询银行")
     @PreAuthorize("@el.check('bank:list')")
-    public ResponseEntity<PageResult<Bank>> queryBank(BankQueryCriteria criteria, Page<Object> page){
-        return new ResponseEntity<>(bankService.queryAll(criteria,page),HttpStatus.OK);
+    public ResponseEntity<PageResult<Bank>> queryBank(@ParameterObject BankQueryCriteria criteria){
+        return new ResponseEntity<>(bankService.queryAll(criteria,criteria.buildPage()),HttpStatus.OK);
     }
 
     @PostMapping

@@ -54,8 +54,7 @@ import java.util.stream.Collectors;
  * @author Zheng Jie
  * @date 2018-11-23
  */
-@Tag(name = "系统：用户管理")
-@Hidden
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -68,14 +67,14 @@ public class UserController {
     private final RoleService roleService;
     private final VerifyService verificationCodeService;
 
-    @Operation(summary = "导出用户数据")
+    @Operation(summary = "导出用户数据", hidden = true)
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('user:list')")
     public void exportUser(HttpServletResponse response, UserQueryCriteria criteria) throws IOException {
         userService.download(userService.queryAll(criteria), response);
     }
 
-    @Operation(summary = "查询用户")
+    @Operation(summary = "查询用户", hidden = true)
     @GetMapping
     @PreAuthorize("@el.check('user:list')")
     public ResponseEntity<PageResult<User>> queryUser(UserQueryCriteria criteria, Page<Object> page){
@@ -104,7 +103,7 @@ public class UserController {
     }
 
     @Log("新增用户")
-    @Operation(summary = "新增用户")
+    @Operation(summary = "新增用户", hidden = true)
     @PostMapping
     @PreAuthorize("@el.check('user:add')")
     public ResponseEntity<Object> createUser(@Validated @RequestBody User resources){
@@ -116,7 +115,7 @@ public class UserController {
     }
 
     @Log("修改用户")
-    @Operation(summary = "修改用户")
+    @Operation(summary = "修改用户", hidden = true)
     @PutMapping
     @PreAuthorize("@el.check('user:edit')")
     public ResponseEntity<Object> updateUser(@Validated(User.Update.class) @RequestBody User resources) throws Exception {
@@ -126,7 +125,7 @@ public class UserController {
     }
 
     @Log("修改用户：个人中心")
-    @Operation(summary = "修改用户：个人中心")
+    @Operation(summary = "修改用户：个人中心", hidden = true)
     @PutMapping(value = "center")
     public ResponseEntity<Object> centerUser(@Validated(User.Update.class) @RequestBody User resources){
         if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
@@ -137,7 +136,7 @@ public class UserController {
     }
 
     @Log("删除用户")
-    @Operation(summary = "删除用户")
+    @Operation(summary = "删除用户", hidden = true)
     @DeleteMapping
     @PreAuthorize("@el.check('user:del')")
     public ResponseEntity<Object> deleteUser(@RequestBody Set<Long> ids){
@@ -168,7 +167,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "重置密码")
+    @Operation(summary = "重置密码", hidden = true)
     @PutMapping(value = "/resetPwd")
     public ResponseEntity<Object> resetPwd(@RequestBody Set<Long> ids) {
         String pwd = passwordEncoder.encode("123456");
@@ -176,14 +175,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "修改头像")
+    @Operation(summary = "修改头像", hidden = true)
     @PostMapping(value = "/updateAvatar")
     public ResponseEntity<Object> updateUserAvatar(@RequestParam MultipartFile avatar){
         return new ResponseEntity<>(userService.updateAvatar(avatar), HttpStatus.OK);
     }
 
     @Log("修改邮箱")
-    @Operation(summary = "修改邮箱")
+    @Operation(summary = "修改邮箱", hidden = true)
     @PostMapping(value = "/updateEmail/{code}")
     public ResponseEntity<Object> updateUserEmail(@PathVariable String code, @RequestBody User resources) throws Exception {
         String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,resources.getPassword());

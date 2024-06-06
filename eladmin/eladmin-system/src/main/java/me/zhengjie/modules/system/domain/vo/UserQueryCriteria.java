@@ -38,7 +38,7 @@ public class UserQueryCriteria extends Pageable {
     @Schema(hidden = true)
     private Set<Long> deptIds = new HashSet<>();
 
-    @Schema(description = "模糊搜索")
+    @Schema(description = "模糊搜索", hidden = true)
     private String blurry;
 
     @Schema(hidden = true)
@@ -47,10 +47,20 @@ public class UserQueryCriteria extends Pageable {
     @Schema(hidden = true)
     private Long deptId;
 
+    @Schema(hidden = true)
     private Long roleId;
 
     private List<Timestamp> createTime;
 
     @Schema(hidden = true)
     private Long offset;
+
+    @Schema(description = "账号")
+    private String username;
+
+    @Schema(description = "名称")
+    private String idName;
+
+    @Schema(description = "手机号")
+    private String phone;
 }

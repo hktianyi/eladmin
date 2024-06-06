@@ -15,6 +15,7 @@
  */
 package me.zhengjie.modules.security.service.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.NotBlank;
@@ -27,10 +28,12 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class AuthUserDto {
 
+    @Schema(description = "登录类型，0-用户名密码，1-验证码")
+    private int type;
+
     @NotBlank
     private String username;
 
-    @NotBlank
     private String password;
 
     private String code;

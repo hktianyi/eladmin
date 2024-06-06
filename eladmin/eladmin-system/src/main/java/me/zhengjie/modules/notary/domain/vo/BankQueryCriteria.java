@@ -15,12 +15,29 @@
 */
 package me.zhengjie.modules.notary.domain.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import me.zhengjie.utils.Pageable;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
 * @author rdbao
 * @date 2024-06-06
 **/
 @Data
-public class BankQueryCriteria{
+@Schema
+public class BankQueryCriteria extends Pageable {
+
+    @Schema(description = "客户名称")
+    private String bankName;
+
+    @Schema(description = "代理人姓名")
+    private String agentName;
+
+    @Schema(description = "代理人手机号")
+    private String agentTel;
+
+    private List<Timestamp> createTime;
 }

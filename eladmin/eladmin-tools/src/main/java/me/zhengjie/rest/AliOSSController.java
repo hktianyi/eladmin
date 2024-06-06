@@ -61,7 +61,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/alioss")
-@Tag(name = "工具：阿里云存储管理")
+@Tag(name = "阿里云存储管理")
 public class AliOSSController {
 
     private final QiniuContentService qiniuContentService;
