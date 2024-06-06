@@ -16,6 +16,7 @@
 package me.zhengjie.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/generator")
 @Tag(name = "系统：代码生成管理")
+@Hidden
 public class GeneratorController {
 
     private final GeneratorService generatorService;

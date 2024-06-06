@@ -16,6 +16,7 @@
 package me.zhengjie.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.domain.LocalStorage;
@@ -42,6 +43,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "工具：本地存储管理")
+@Hidden
 @RequestMapping("/api/localStorage")
 public class LocalStorageController {
 

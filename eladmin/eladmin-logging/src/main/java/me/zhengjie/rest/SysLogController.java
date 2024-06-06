@@ -16,6 +16,7 @@
 package me.zhengjie.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api/logs")
 @Tag(name = "系统：日志管理")
+@Hidden
 public class SysLogController {
 
     private final SysLogService sysLogService;

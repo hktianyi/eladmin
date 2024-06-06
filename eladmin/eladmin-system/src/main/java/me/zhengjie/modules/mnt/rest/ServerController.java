@@ -16,6 +16,7 @@
 package me.zhengjie.modules.mnt.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ import java.util.Set;
 */
 @RestController
 @Tag(name = "运维：服务器管理")
+@Hidden
 @RequiredArgsConstructor
 @RequestMapping("/api/serverDeploy")
 public class ServerController {

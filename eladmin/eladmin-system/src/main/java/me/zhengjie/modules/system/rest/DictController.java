@@ -16,6 +16,7 @@
 package me.zhengjie.modules.system.rest;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "系统：字典管理")
+@Hidden
 @RequestMapping("/api/dict")
 public class DictController {
 

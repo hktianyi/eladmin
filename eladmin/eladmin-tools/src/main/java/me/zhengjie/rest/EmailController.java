@@ -15,6 +15,7 @@
  */
 package me.zhengjie.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("api/email")
 @Tag(name = "工具：邮件管理")
+@Hidden
 public class EmailController {
 
     private final EmailService emailService;

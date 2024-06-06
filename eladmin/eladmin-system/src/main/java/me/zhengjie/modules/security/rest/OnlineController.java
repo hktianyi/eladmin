@@ -15,6 +15,7 @@
  */
 package me.zhengjie.modules.security.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @RequestMapping("/auth/online")
 @Tag(name = "系统：在线用户管理")
+@Hidden
 public class OnlineController {
 
     private final OnlineUserService onlineUserService;

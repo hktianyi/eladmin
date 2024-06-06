@@ -15,6 +15,7 @@
  */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import me.zhengjie.annotation.Limit;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 @RequestMapping("/api/limit")
 @Tag(name = "系统：限流测试管理")
+@Hidden
 public class LimitController {
 
     private static final AtomicInteger ATOMIC_INTEGER = new AtomicInteger();

@@ -15,6 +15,7 @@
  */
 package me.zhengjie.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/genConfig")
 @Tag(name = "系统：代码生成器配置管理")
+@Hidden
 public class GenConfigController {
 
     private final GenConfigService genConfigService;

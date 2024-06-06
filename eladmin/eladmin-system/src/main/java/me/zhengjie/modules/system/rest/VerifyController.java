@@ -15,6 +15,7 @@
  */
 package me.zhengjie.modules.system.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @RequestMapping("/api/code")
 @Tag(name = "系统：验证码管理")
+@Hidden
 public class VerifyController {
 
     private final VerifyService verificationCodeService;

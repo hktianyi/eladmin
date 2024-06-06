@@ -17,6 +17,7 @@ package me.zhengjie.modules.system.rest;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
  * @date 2018-11-23
  */
 @Tag(name = "系统：用户管理")
+@Hidden
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor

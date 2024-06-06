@@ -15,6 +15,7 @@
  */
 package me.zhengjie.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/aliPay")
 @Tag(name = "工具：支付宝管理")
+@Hidden
 public class AliPayController {
 
     private final AlipayUtils alipayUtils;

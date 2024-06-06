@@ -15,6 +15,7 @@
  */
 package me.zhengjie;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import me.zhengjie.annotation.rest.AnonymousGetMapping;
 import me.zhengjie.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Zheng Jie
  * @date 2018/11/15 9:20:19
  */
+@Hidden
 @EnableAsync
 @RestController
 @SpringBootApplication
