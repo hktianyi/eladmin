@@ -30,6 +30,8 @@ public interface QiNiuConfigService extends IService<QiniuConfig> {
      */
     QiniuConfig getConfig();
 
+    QiniuConfig getConfig(Integer id);
+
     /**
      * 保存
      * @param type 类型

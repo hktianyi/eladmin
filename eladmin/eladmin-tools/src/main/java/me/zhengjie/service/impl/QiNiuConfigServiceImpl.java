@@ -37,9 +37,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class QiNiuConfigServiceImpl extends ServiceImpl<QiniuConfigMapper, QiniuConfig> implements QiNiuConfigService {
 
     @Override
-    @Cacheable(key = "'config'")
     public QiniuConfig getConfig() {
-        QiniuConfig qiniuConfig = getById(1L);
+        return getConfig(1);
+    }
+
+    @Override
+    @Cacheable(key = "'config' + #id")
+    public QiniuConfig getConfig(Integer id) {
+        QiniuConfig qiniuConfig = getById(id);
         return qiniuConfig == null ? new QiniuConfig() : qiniuConfig;
     }
 
