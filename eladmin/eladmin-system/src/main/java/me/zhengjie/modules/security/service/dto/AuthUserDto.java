@@ -28,7 +28,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class AuthUserDto {
 
-    @Schema(description = "登录类型，0-用户名密码，1-验证码")
+    @Schema(description = "登录类型，0-用户名密码，1-验证码", requiredMode = Schema.RequiredMode.REQUIRED)
     private int type;
 
     @NotBlank
@@ -38,5 +38,6 @@ public class AuthUserDto {
 
     private String code;
 
-    private String uuid = "";
+    @Schema(hidden = true)
+    private String uuid;
 }

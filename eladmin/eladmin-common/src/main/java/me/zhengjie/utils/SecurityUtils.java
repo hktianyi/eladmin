@@ -15,9 +15,9 @@
  */
 package me.zhengjie.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.utils.enums.DataScopeEnum;
@@ -26,10 +26,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
 import java.util.List;
 
 /**
  * 获取当前登录的用户
+ *
  * @author Zheng Jie
  * @date 2019-01-17
  */
@@ -38,6 +40,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前登录的用户
+     *
      * @return UserDetails
      */
     public static UserDetails getCurrentUser() {
@@ -64,34 +67,37 @@ public class SecurityUtils {
 
     /**
      * 获取系统用户ID
+     *
      * @return 系统用户ID
      */
     public static Long getCurrentUserId() {
         UserDetails userDetails = getCurrentUser();
         // 将 Java 对象转换为 JSONObject 对象
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(userDetails);
+        JSONObject jsonObject = JSONUtil.parseObj(userDetails);
         return jsonObject.getJSONObject("user").getLong("id");
     }
 
     /**
      * 获取当前用户的数据权限
+     *
      * @return /
      */
-    public static List<Long> getCurrentUserDataScope(){
+    public static List<Long> getCurrentUserDataScope() {
         UserDetails userDetails = getCurrentUser();
         // 将 Java 对象转换为 JSONObject 对象
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(userDetails);
+        JSONObject jsonObject = JSONUtil.parseObj(userDetails);
         JSONArray jsonArray = jsonObject.getJSONArray("dataScopes");
-        return JSON.parseArray(jsonArray.toJSONString(), Long.class);
+        return jsonArray.stream().map(e -> (Long) e).toList();
     }
 
     /**
      * 获取数据权限级别
+     *
      * @return 级别
      */
     public static String getDataScopeType() {
         List<Long> dataScopes = getCurrentUserDataScope();
-        if(dataScopes.size() != 0){
+        if (dataScopes.size() != 0) {
             return "";
         }
         return DataScopeEnum.ALL.getValue();

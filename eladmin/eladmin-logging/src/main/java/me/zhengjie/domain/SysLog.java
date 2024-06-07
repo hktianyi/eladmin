@@ -15,7 +15,6 @@
  */
 package me.zhengjie.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,7 +63,6 @@ public class SysLog  implements Serializable {
     private Long time;
 
     /** 异常详细  */
-    @JSONField(serialize = false)
     private String exceptionDetail;
 
     /** 创建日期 */

@@ -78,7 +78,7 @@ public class AliOSSController {
             QiniuConfig config = qiNiuConfigService.getConfig();
             bucketName = config.getBucket();
             DefaultCredentialProvider credentialsProvider = CredentialsProviderFactory.newDefaultCredentialProvider(config.getAccessKey(), config.getSecretKey());
-            return new OSSClientBuilder().build(config.getZone(), credentialsProvider);
+            return new OSSClientBuilder().build("https://"+config.getZone()+".aliyuncs.com", credentialsProvider);
         }
     }
 

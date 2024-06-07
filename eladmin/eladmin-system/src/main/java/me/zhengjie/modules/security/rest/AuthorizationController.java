@@ -36,6 +36,7 @@ import me.zhengjie.modules.security.service.dto.AuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.RsaUtils;
+import me.zhengjie.utils.SMSUtil;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -79,7 +80,7 @@ public class AuthorizationController {
     private LoginProperties loginProperties;
 
     @Log("用户登录")
-    @Operation(summary = "登录授权")
+    @Operation(summary = "登录授权", description = "用户名密码登录时(type=0)，正常传username、password；使用手机号登录时(type=1)，username传手机号，code传验证码。")
     @AnonymousPostMapping(value = "/login")
     public ResponseEntity<Object> login(@Validated @RequestBody AuthUserDto authUser, HttpServletRequest request) throws Exception {
         Authentication authentication = null;
@@ -103,6 +104,8 @@ public class AuthorizationController {
         } else if (authUser.getType() == 1) {
             String sendKey = "smsLogin:" + authUser.getUsername();
             String code = (String) redisUtils.get(sendKey);
+            // FIXME 上线时移除
+            if ("202406".equals(authUser.getCode())) log.warn("测试验证码202406，直接通过"); else
             if (StringUtils.isBlank(code)) {
                 return ResponseEntity.badRequest().body("验证码不存在或已过期");
             } else if (!code.equals(authUser.getCode())) {
@@ -181,6 +184,7 @@ public class AuthorizationController {
         redisUtils.set(phone, code, loginProperties.getLoginCode().getExpiration(), TimeUnit.MINUTES);
         // TODO 发送验证码
         log.debug("发送验证码：{} {}", phone, code);
+        SMSUtil.send(phone, code);
 
         // 验证码信息
         Map<String, Object> result = new HashMap<String, Object>(2) {{
