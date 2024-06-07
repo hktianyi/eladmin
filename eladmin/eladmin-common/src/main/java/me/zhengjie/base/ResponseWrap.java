@@ -17,6 +17,10 @@ public class ResponseWrap<T> {
     @Schema
     private T data;
 
+    public static <T> ResponseWrap<T> ok() {
+        return ok(null);
+    }
+
     public static <T> ResponseWrap<T> ok(T data) {
         return new ResponseWrap<T>().setCode(200).setData(data);
     }

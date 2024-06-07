@@ -17,6 +17,8 @@ package me.zhengjie.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.DigestAlgorithm;
+import cn.hutool.crypto.digest.Digester;
 import com.wf.captcha.base.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -80,7 +82,7 @@ public class AuthorizationController {
     private LoginProperties loginProperties;
 
     @Log("用户登录")
-    @Operation(summary = "登录授权", description = "用户名密码登录时(type=0)，正常传username、password；使用手机号登录时(type=1)，username传手机号，code传验证码。")
+    @Operation(summary = "登录授权", description = "用户名密码登录时(type=0)，正常传username、password；\n使用手机号登录时(type=1)，username传手机号，code传验证码；\n使用手机号快捷登录时，password需传入“type+phone+key”的MD5值。")
     @AnonymousPostMapping(value = "/login")
     public ResponseEntity<Object> login(@Validated @RequestBody AuthUserDto authUser, HttpServletRequest request) throws Exception {
         Authentication authentication = null;
@@ -110,6 +112,14 @@ public class AuthorizationController {
                 return ResponseEntity.badRequest().body("验证码不存在或已过期");
             } else if (!code.equals(authUser.getCode())) {
                 return ResponseEntity.badRequest().body("验证码错误");
+            }
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
+            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        } else if (authUser.getType() == 2) {
+            String password = new Digester(DigestAlgorithm.MD5).digestHex(authUser.getType() + authUser.getUsername() + "202406");
+            if (!password.equalsIgnoreCase(authUser.getPassword())) {
+                return ResponseEntity.badRequest().body("登录无效");
             }
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
@@ -182,7 +192,6 @@ public class AuthorizationController {
         }
         // 保存
         redisUtils.set(phone, code, loginProperties.getLoginCode().getExpiration(), TimeUnit.MINUTES);
-        // TODO 发送验证码
         log.debug("发送验证码：{} {}", phone, code);
         SMSUtil.send(phone, code);
 

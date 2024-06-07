@@ -16,7 +16,9 @@
 package me.zhengjie.config;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,6 +81,14 @@ public class RedisConfig extends CachingConfigurerSupport {
         // value值的序列化采用fastJsonRedisSerializer
         template.setValueSerializer(fastJsonRedisSerializer);
         template.setHashValueSerializer(fastJsonRedisSerializer);
+        // fastjson 升级到 1.2.83 后需要指定序列化白名单
+        ParserConfig.getGlobalInstance().addAccept("me.zhengjie.domain");
+        // 模块内的实体类
+        ParserConfig.getGlobalInstance().addAccept("me.zhengjie.modules.mnt.domain");
+        ParserConfig.getGlobalInstance().addAccept("me.zhengjie.modules.quartz.domain");
+        ParserConfig.getGlobalInstance().addAccept("me.zhengjie.modules.system.domain");
+        // 模块内的 Dto
+        ParserConfig.getGlobalInstance().addAccept("me.zhengjie.modules.security.service.dto");
         // key的序列化采用StringRedisSerializer
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
@@ -106,7 +116,7 @@ public class RedisConfig extends CachingConfigurerSupport {
                 container.put(String.valueOf(i),params[i]);
             }
             // 转为JSON字符串
-            String jsonString = JSONUtil.toJsonStr(container);
+            String jsonString = JSON.toJSONString(container);
             // 做SHA256 Hash计算，得到一个SHA256摘要作为Key
             return DigestUtils.sha256Hex(jsonString);
         };
@@ -163,7 +173,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         if (t == null) {
             return new byte[0];
         }
-        return JSONUtil.toJsonStr(t).getBytes(StandardCharsets.UTF_8);
+        return JSON.toJSONString(t, SerializerFeature.WriteClassName).getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
@@ -172,7 +182,7 @@ public class RedisConfig extends CachingConfigurerSupport {
             return null;
         }
         String str = new String(bytes, StandardCharsets.UTF_8);
-        return JSONUtil.toBean(str, clazz);
+        return JSON.parseObject(str, clazz);
     }
 
 }
@@ -202,7 +212,7 @@ class StringRedisSerializer implements RedisSerializer<Object> {
 
 	@Override
 	public @Nullable byte[] serialize(Object object) {
-		String string = JSONUtil.toJsonStr(object);
+		String string = JSON.toJSONString(object);
 
 		if (StringUtils.isBlank(string)) {
 			return null;

@@ -60,5 +60,10 @@
             <artifactId>tencentcloud-sdk-java-sms</artifactId>
             <version>3.1.1024</version>
         </dependency>
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-faceid</artifactId>
+            <version>3.1.1034</version>
+        </dependency>
     </dependencies>
 </project>

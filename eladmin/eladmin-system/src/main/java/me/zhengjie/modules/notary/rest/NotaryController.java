@@ -16,7 +16,6 @@
 package me.zhengjie.modules.notary.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
@@ -44,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -73,13 +71,13 @@ public class NotaryController {
     public ResponseEntity<PageResult<NotaryDTO>> queryUser(@ParameterObject UserQueryCriteria criteria) {
         criteria.setRoleId(NOTARY_ROLE_ID);
         PageResult<User> userPageResult = userService.queryAll(criteria, criteria.buildPage());
-        List<Long> userIdList = userPageResult.content().stream().map(User::getId).toList();
+        List<Long> userIdList = userPageResult.list().stream().map(User::getId).toList();
         IdentityInfoQueryCriteria identityInfoQueryCriteria = new IdentityInfoQueryCriteria();
         identityInfoQueryCriteria.setUserIds(userIdList);
         Map<Long, IdentityInfo> identityInfoMap = identityInfoService.queryAll(identityInfoQueryCriteria)
                 .stream().collect(Collectors.toMap(IdentityInfo::getUserId, v -> v, (v1, v2) -> v1));
 
-        PageResult<NotaryDTO> pageResult = new PageResult<>(userPageResult.content().stream().map(item -> {
+        PageResult<NotaryDTO> pageResult = new PageResult<>(userPageResult.list().stream().map(item -> {
             NotaryDTO notaryDTO = new NotaryDTO();
             notaryDTO.setId(item.getId());
             notaryDTO.setUsername(item.getUsername());

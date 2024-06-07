@@ -17,7 +17,7 @@
         <module>eladmin-generator</module>
     </modules>
 
-    <name>ELADMIN 后台管理</name>
+    <name>后台管理</name>
     <url>https://eladmin.vip</url>
 
     <parent>
@@ -178,6 +178,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>1.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.83</version>
         </dependency>
     </dependencies>
 

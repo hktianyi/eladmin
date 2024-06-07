@@ -10,6 +10,8 @@ mybatis-plus:
     cache-enabled: false
     # 设置本地缓存作用域
     local-cache-scope: SESSION
+  global-config:
+    banner: false
 
 spring:
   freemarker:
@@ -22,7 +24,6 @@ spring:
         enabled: false
   #  pid:
   #    file: /自行指定位置/eladmin.pid
-
   redis:
     #数据库索引
     database: ${REDIS_DB:1}
@@ -31,9 +32,13 @@ spring:
     password: ${REDIS_PWD:}
     #连接超时时间
     timeout: 5000
-
   config:
     import: optional:file:.env[.properties]
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  gson:
+    date-format: yyyy-MM-dd HH:mm:ss
 
 task:
   pool:
@@ -45,7 +50,6 @@ task:
     keep-alive-seconds: 60
     # 队列容量
     queue-capacity: 50
-
 #七牛云
 qiniu:
   # 文件大小 /M

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="me.zhengjie.modules.notary.mapper.FaceidInfoMapper">
+    <resultMap id="BaseResultMap" type="me.zhengjie.modules.notary.domain.FaceidInfo">
+        <id column="id" property="id"/>
+        <result column="case_id" property="caseId"/>
+        <result column="id_name" property="idName"/>
+        <result column="id_card" property="idCard"/>
+        <result column="face_verify_time" property="faceVerifyTime"/>
+        <result column="verify_result" property="verifyResult"/>
+        <result column="verify_rate" property="verifyRate"/>
+        <result column="face_png_url" property="facePngUrl"/>
+        <result column="face_video_url" property="faceVideoUrl"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, case_id, id_name, id_card, face_verify_time, verify_result, verify_rate, face_png_url, face_video_url, create_time, update_time
+    </sql>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from b_faceid_info
+        <where>
+        </where>
+        order by id desc
+    </select>
+</mapper>

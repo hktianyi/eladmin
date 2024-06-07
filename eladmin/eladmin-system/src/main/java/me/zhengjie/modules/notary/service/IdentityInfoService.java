@@ -15,6 +15,7 @@
  */
 package me.zhengjie.modules.notary.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,10 @@ public class IdentityInfoService extends ServiceImpl<IdentityInfoMapper, Identit
 
     public PageResult<IdentityInfo> queryAll(IdentityInfoQueryCriteria criteria, Page<Object> page) {
         return PageUtil.toPage(identityInfoMapper.findAll(criteria, page));
+    }
+
+    public IdentityInfo queryByUserId(Long userId) {
+        return identityInfoMapper.selectOne(Wrappers.<IdentityInfo>lambdaQuery().eq(IdentityInfo::getUserId, userId));
     }
 
     public List<IdentityInfo> queryAll(IdentityInfoQueryCriteria criteria) {

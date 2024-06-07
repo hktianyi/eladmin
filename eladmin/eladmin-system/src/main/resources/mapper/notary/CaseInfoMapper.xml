@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="me.zhengjie.modules.notary.mapper.CaseInfoMapper">
+    <resultMap id="BaseResultMap" type="me.zhengjie.modules.notary.domain.CaseInfo">
+        <id column="id" property="id"/>
+        <result column="bank_id" property="bankId"/>
+        <result column="case_no" property="caseNo"/>
+        <result column="loan_name" property="loanName"/>
+        <result column="loan_idCard" property="loanIdcard"/>
+        <result column="loan_tel" property="loanTel"/>
+        <result column="loan_address" property="loanAddress"/>
+        <result column="loan_mail" property="loanMail"/>
+        <result column="creditor" property="creditor"/>
+        <result column="agent_name" property="agentName"/>
+        <result column="agent_idCard" property="agentIdcard"/>
+        <result column="appointment_time" property="appointmentTime"/>
+        <result column="notary_name" property="notaryName"/>
+        <result column="user_id" property="userId"/>
+        <result column="status" property="status"/>
+        <result column="card_no" property="cardNo"/>
+        <result column="debt_amount" property="debtAmount"/>
+        <result column="monthly_repayment" property="monthlyRepayment"/>
+        <result column="instalment_begin_time" property="instalmentBeginTime"/>
+        <result column="prosecute_limit_time" property="prosecuteLimitTime"/>
+        <result column="consensus_amount" property="consensusAmount"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, bank_id, case_no, loan_name, loan_idCard, loan_tel, loan_address, loan_mail, creditor, agent_name, agent_idCard, appointment_time, notary_name, user_id, status, card_no, debt_amount, monthly_repayment, instalment_begin_time, prosecute_limit_time, consensus_amount, remark, create_time, update_time
+    </sql>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from b_case_info
+        <where>
+        </where>
+        order by id desc
+    </select>
+</mapper>
